@@ -1,4 +1,5 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Nat.Basic
 import Library.Basic
 
 math2001_init
@@ -24,7 +25,7 @@ example {r s : ℝ} (h1 : s = 3) (h2 : r + 2 * s = -1) : r = -7 :=
   calc
     r = r + 2 * s - 2 * s := by ring
     _ = -1 - 2 * s := by rw [h2]
-    _ = -1 - 2 * 3 := by norm_num
+    _ = -1 - 2 * 3 := by rw[h1]
     _ = -7 := by ring
 
 -- Example 1.2.3
@@ -44,5 +45,5 @@ example {a b c d e f : ℤ} (h1 : a * d = b * c) (h2 : c * f = d * e) :
   calc
     d * (a * f - b * e) = a * d * f - b * d * e := by ring
     _ = b * c * f - b * d * e := by rw [h1]
-    _ = b * d * e - b * d * e := by rw [h2]
+    _ = b * d * e - b * d * e := by rw [mul_assoc b c f, h2]; ring
     _ = 0 := by ring
