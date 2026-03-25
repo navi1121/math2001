@@ -136,7 +136,7 @@ example : Prime 79 := by
 /-! # Exercises -/
 
 
-example : ¬ (∃ t : ℝ, t ≤ 4 ∧ t ≥ 5) := by
+example : ¬ (∃ t : ℝ, t ≤ 4 ∧ t ≥ 5) := by ----
   intro ⟨t, ht4, ht5⟩
   have : (5 : ℝ) ≤ 4 := by
     calc 5 ≤ t := ht5
@@ -146,7 +146,7 @@ example : ¬ (∃ t : ℝ, t ≤ 4 ∧ t ≥ 5) := by
 example : ¬ (∃ a : ℝ, a ^ 2 ≤ 8 ∧ a ^ 3 ≥ 30) := by
   sorry
 
-example : ¬ Int.Even 7 := by
+example : ¬ Int.Even 7 := by -----
   intro h
   rw [Int.even_iff_modEq] at h
   have hmod : 7 ≡ 1 [ZMOD 2] := by
@@ -158,7 +158,7 @@ example : ¬ Int.Even 7 := by
 example {n : ℤ} (hn : n + 3 = 7) : ¬ (Int.Even n ∧ n ^ 2 = 10) := by
   sorry
 
-example {x : ℝ} (hx : x ^ 2 < 9) : ¬ (x ≤ -3 ∨ x ≥ 3) := by
+example {x : ℝ} (hx : x ^ 2 < 9) : ¬ (x ≤ -3 ∨ x ≥ 3) := by -----
   intro h
   obtain h | h := h
   · -- x ≤ -3  →  x² ≥ 9
@@ -176,7 +176,7 @@ example {x : ℝ} (hx : x ^ 2 < 9) : ¬ (x ≤ -3 ∨ x ≥ 3) := by
 example : ¬ (∃ N : ℕ, ∀ k > N, Nat.Even k) := by
   sorry
 
-example (n : ℤ) : ¬(n ^ 2 ≡ 2 [ZMOD 4]) := by
+example (n : ℤ) : ¬(n ^ 2 ≡ 2 [ZMOD 4]) := by -----
   intro h
   mod_cases hn : n % 4
   · have hns : n ^ 2 ≡ 0 [ZMOD 4] := by
@@ -205,7 +205,7 @@ example (n : ℤ) : ¬(n ^ 2 ≡ 2 [ZMOD 4]) := by
 example : ¬ Prime 1 := by
   sorry
 
-example : Prime 97 := by
+example : Prime 97 := by ------
   apply better_prime_test (T := 10)
   · numbers
   · numbers

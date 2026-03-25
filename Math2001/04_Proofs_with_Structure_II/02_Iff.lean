@@ -92,7 +92,7 @@ example (n : ℤ) : Even n ∨ Odd n := by
 /-! # Exercises -/
 
 
-example {x : ℝ} : 2 * x - 1 = 11 ↔ x = 6 := by
+example {x : ℝ} : 2 * x - 1 = 11 ↔ x = 6 := by -----
   constructor
   · intro h
     have : x = (2 * x - 1 + 1) / 2 := by ring
@@ -107,7 +107,7 @@ example {x : ℝ} : 2 * x - 1 = 11 ↔ x = 6 := by
 example {n : ℤ} : 63 ∣ n ↔ 7 ∣ n ∧ 9 ∣ n := by
   sorry
 
-theorem dvd_iff_modEq {a n : ℤ} : n ∣ a ↔ a ≡ 0 [ZMOD n] := by
+theorem dvd_iff_modEq {a n : ℤ} : n ∣ a ↔ a ≡ 0 [ZMOD n] := by -----
   constructor
   · intro h
     obtain ⟨k, hk⟩ := h
@@ -122,7 +122,7 @@ theorem dvd_iff_modEq {a n : ℤ} : n ∣ a ↔ a ≡ 0 [ZMOD n] := by
 example {a b : ℤ} (hab : a ∣ b) : a ∣ 2 * b ^ 3 - b ^ 2 + 3 * b := by
   sorry
 
-example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by
+example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by -----
   constructor
   · intro h
     -- interval_cases

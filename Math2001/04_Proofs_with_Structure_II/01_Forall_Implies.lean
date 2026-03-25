@@ -87,7 +87,7 @@ example : ¬ Prime 6 := by
 /-! # Exercises -/
 
 
-example {a : ℚ} (h : ∀ b : ℚ, a ≥ -3 + 4 * b - b ^ 2) : a ≥ 1 :=
+example {a : ℚ} (h : ∀ b : ℚ, a ≥ -3 + 4 * b - b ^ 2) : a ≥ 1 := -----
   have := h 2
   calc
     a ≥ -3 + 4 * 2 - 2 ^ 2 := by apply this
@@ -96,7 +96,7 @@ example {a : ℚ} (h : ∀ b : ℚ, a ≥ -3 + 4 * b - b ^ 2) : a ≥ 1 :=
 example {n : ℤ} (hn : ∀ m, 1 ≤ m → m ≤ 5 → m ∣ n) : 15 ∣ n := by
   sorry
 
-example : ∃ n : ℕ, ∀ m : ℕ, n ≤ m := by
+example : ∃ n : ℕ, ∀ m : ℕ, n ≤ m := by ----
   use 0
   intro m
   exact Nat.zero_le m
@@ -105,7 +105,7 @@ example : ∃ a : ℝ, ∀ b : ℝ, ∃ c : ℝ, a + b < c := by
   sorry
 
 example : forall_sufficiently_large x : ℝ, x ^ 3 + 3 * x ≥ 7 * x ^ 2 + 12 := by
-  dsimp
+  dsimp -----
   use 7
   intro x hx
   calc x ^ 3 + 3 * x

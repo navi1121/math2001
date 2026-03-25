@@ -69,7 +69,7 @@ example : ∃! r : ℤ, 0 ≤ r ∧ r < 5 ∧ 14 ≡ r [ZMOD 5] := by
 /-! # Exercises -/
 
 
-example : ∃! x : ℚ, 4 * x - 3 = 9 := by
+example : ∃! x : ℚ, 4 * x - 3 = 9 := by ------
   use 3
   dsimp
   constructor
@@ -83,30 +83,33 @@ example : ∃! x : ℚ, 4 * x - 3 = 9 := by
 example : ∃! n : ℕ, ∀ a, n ≤ a := by
   sorry
 
-example : ∃! r : ℤ, 0 ≤ r ∧ r < 3 ∧ 11 ≡ r [ZMOD 3] := by
-  use 2 ---fix this errorr
+example : ∃! r : ℤ, 0 ≤ r ∧ r < 3 ∧ 11 ≡ r [ZMOD 3] := by ------
+  use 2
   dsimp
   constructor
-  · constructor
-    · numbers [cite: 5]
+  · -- Show 2 satisfies all three conditions
     constructor
-    · numbers [cite: 5]
-    use 3
-    numbers
-  · intro r hr
+    · numbers                    -- 0 ≤ 2
+    constructor
+    · numbers                    -- 2 < 3
+    · use 3; numbers             -- 11 ≡ 2 [ZMOD 3]:  11 - 2 = 3 * 3
+  · -- Uniqueness: any r satisfying the conditions equals 2
+    intro r hr
     obtain ⟨hr0, hr3, hr11⟩ := hr
-    obtain ⟨q, hq⟩ := hr11
+    obtain ⟨q, hq⟩ := hr11      -- hq : 11 - r = 3 * q
+    -- Bound q from below: r < 3 → 11 - r > 8 → 3q > 8 → q ≥ 3
     have hqlo : 2 < q := by
-      have h1 : 3 * q = 11 - r := by addarith [hq]
-      have h2 : 11 - r > 11 - 3 := by addarith [hr3]
-      have h3 : 3 * q > 8 := by addarith [h1, h2]
-      have h4 : 3 * q > 3 * 2 := by addarith [h3]
-      cancel 3 at h4
+      have h1 : 11 - r > 8 := by addarith [hr3]
+      have h2 : 3 * q > 8  := by addarith [hq, h1]
+      have h3 : 3 * 2 < 3 * q := by addarith [h2]
+      cancel 3 at h3
+    -- Bound q from above: r ≥ 0 → 11 - r ≤ 11 → 3q ≤ 11 → q ≤ 3
     have hqhi : q < 4 := by
-      have h1 : 3 * q = 11 - r := by addarith [hq]
-      have h2 : 11 - r ≤ 11 - 0 := by addarith [hr0]
-      have h3 : 3 * q ≤ 11 := by addarith [h1, h2]
-      have h4 : 3 * q < 3 * 4 := by addarith [h3]
-      cancel 3 at h4
+      have h1 : 11 - r ≤ 11    := by addarith [hr0]
+      have h2 : 3 * q ≤ 11     := by addarith [hq, h1]
+      have h3 : 3 * q < 3 * 4  := by addarith [h2]
+      cancel 3 at h3
+    -- q must be 3 (only integer with 2 < q < 4)
     interval_cases q
-    addarith [hq]
+    -- Only one case: q = 3
+    addarith [hq]                -- 11 - r = 9 → r = 2

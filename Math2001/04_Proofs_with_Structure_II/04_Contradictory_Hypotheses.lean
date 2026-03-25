@@ -101,11 +101,11 @@ example : Prime 7 := by
   intro m hm1 hm2
   apply Nat.not_dvd_of_exists_lt_and_lt
   interval_cases m
-  · use 3; constructor <;> numbers -- m=2
-  · use 2; constructor <;> numbers -- m=3
-  · use 1; constructor <;> numbers -- m=4
-  · use 1; constructor <;> numbers -- m=5
-  · use 1; constructor <;> numbers -- m=6
+  · use 3; constructor <;> numbers --when m is 2
+  · use 2; constructor <;> numbers --3
+  · use 1; constructor <;> numbers --4
+  · use 1; constructor <;> numbers --5
+  · use 1; constructor <;> numbers --6
 
 example {x : ℚ} (h1 : x ^ 2 = 4) (h2 : 1 < x) : x = 2 := by
   have h3 :=
@@ -118,17 +118,19 @@ example {x : ℚ} (h1 : x ^ 2 = 4) (h2 : 1 < x) : x = 2 := by
 namespace Nat
 
 example (p : ℕ) (h : Prime p) : p = 2 ∨ Odd p := by
-obtain h_even | h_odd := Nat.even_or_odd p  --eerror here with Nat.even_or_odd,
-  · left
-    obtain ⟨k, hk⟩ := h_even --herre error with :=?
-    -- If p is even and prime, p must be 2
-    have h2 : k = 1 := by
-      apply h.right k
-      rw [hk]
-      apply nmem_of_mem_singleton -- This part depends on specific library lemmas
-      -- Simpler: use the fact that if p=2k and p is prime, then k=1
-      sorry
-    rw [hk, h2]
-    numbers
-  · right
-    exact h_odd
+  obtain ⟨hp2, hfact⟩ := h
+  obtain ⟨k, hk⟩ | ⟨k, hk⟩ := p.even_or_odd
+  ·
+    left
+    have h2 : 2 ∣ p := ⟨k, by addarith [hk]⟩
+    obtain h2eq | h2eq := hfact 2 h2
+    · --h2eq : 2 = 1
+      numbers at h2eq
+    ·-- h2eq : 2 = p
+      exact h2eq.symm
+  · -- odd case: hk : p = 2 * k + 1
+    right
+    use k
+    addarith [hk]
+
+end Nat
