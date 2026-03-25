@@ -93,16 +93,51 @@ example (n : ℤ) : Even n ∨ Odd n := by
 
 
 example {x : ℝ} : 2 * x - 1 = 11 ↔ x = 6 := by
-  sorry
+  constructor
+  · intro h
+    have : x = (2 * x - 1 + 1) / 2 := by ring
+    calc x = (2 * x - 1 + 1) / 2 := by ring
+      _ = (11 + 1) / 2            := by rw [h]
+      _ = 6                       := by numbers
+  · intro h
+    calc 2 * x - 1 = 2 * 6 - 1 := by rw [h]
+      _ = 11                    := by numbers
+
 
 example {n : ℤ} : 63 ∣ n ↔ 7 ∣ n ∧ 9 ∣ n := by
   sorry
 
 theorem dvd_iff_modEq {a n : ℤ} : n ∣ a ↔ a ≡ 0 [ZMOD n] := by
-  sorry
+  constructor
+  · intro h
+    obtain ⟨k, hk⟩ := h
+    show n ∣ a - 0
+    use k
+    addarith [hk]
+  · intro h
+    obtain ⟨k, hk⟩ := h    -- hk : a - 0 = n * k
+    use k
+    addarith [hk]
 
 example {a b : ℤ} (hab : a ∣ b) : a ∣ 2 * b ^ 3 - b ^ 2 + 3 * b := by
   sorry
 
 example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by
-  sorry
+  constructor
+  · intro h
+    -- interval_cases
+    have hk : k ≤ 2 := by
+      have h3 : k ^ 2 < 3 ^ 2 := by
+        calc k ^ 2 ≤ 6 := h
+          _ < 9       := by numbers
+          _ = 3 ^ 2   := by numbers
+      cancel 2 at h3
+      addarith [h3]
+    interval_cases k
+    · left;         numbers
+    · right; left;  numbers
+    · right; right; numbers
+  · rintro (rfl | rfl | rfl)
+    · numbers
+    · numbers
+    · numbers

@@ -70,10 +70,43 @@ example : ∃! r : ℤ, 0 ≤ r ∧ r < 5 ∧ 14 ≡ r [ZMOD 5] := by
 
 
 example : ∃! x : ℚ, 4 * x - 3 = 9 := by
-  sorry
+  use 3
+  dsimp
+  constructor
+  · numbers
+  · intro y hy
+    have : y = (4 * y - 3 + 3) / 4 := by ring
+    calc y = (4 * y - 3 + 3) / 4 := by ring
+      _ = (9 + 3) / 4             := by rw [hy]
+      _ = 3                       := by numbers
 
 example : ∃! n : ℕ, ∀ a, n ≤ a := by
   sorry
 
 example : ∃! r : ℤ, 0 ≤ r ∧ r < 3 ∧ 11 ≡ r [ZMOD 3] := by
-  sorry
+  use 2 ---fix this errorr
+  dsimp
+  constructor
+  · constructor
+    · numbers [cite: 5]
+    constructor
+    · numbers [cite: 5]
+    use 3
+    numbers
+  · intro r hr
+    obtain ⟨hr0, hr3, hr11⟩ := hr
+    obtain ⟨q, hq⟩ := hr11
+    have hqlo : 2 < q := by
+      have h1 : 3 * q = 11 - r := by addarith [hq]
+      have h2 : 11 - r > 11 - 3 := by addarith [hr3]
+      have h3 : 3 * q > 8 := by addarith [h1, h2]
+      have h4 : 3 * q > 3 * 2 := by addarith [h3]
+      cancel 3 at h4
+    have hqhi : q < 4 := by
+      have h1 : 3 * q = 11 - r := by addarith [hq]
+      have h2 : 11 - r ≤ 11 - 0 := by addarith [hr0]
+      have h3 : 3 * q ≤ 11 := by addarith [h1, h2]
+      have h4 : 3 * q < 3 * 4 := by addarith [h3]
+      cancel 3 at h4
+    interval_cases q
+    addarith [hq]

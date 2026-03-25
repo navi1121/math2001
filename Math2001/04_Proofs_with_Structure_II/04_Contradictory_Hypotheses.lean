@@ -90,13 +90,22 @@ example {a b c : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
 
 example {x y : ℝ} (n : ℕ) (hx : 0 ≤ x) (hn : 0 < n) (h : y ^ n ≤ x ^ n) :
     y ≤ x := by
-  sorry
+  cancel n at h
 
 example (n : ℤ) (hn : n ^ 2 ≡ 4 [ZMOD 5]) : n ≡ 2 [ZMOD 5] ∨ n ≡ 3 [ZMOD 5] := by
   sorry
 
 example : Prime 7 := by
-  sorry
+  apply prime_test
+  · numbers
+  intro m hm1 hm2
+  apply Nat.not_dvd_of_exists_lt_and_lt
+  interval_cases m
+  · use 3; constructor <;> numbers -- m=2
+  · use 2; constructor <;> numbers -- m=3
+  · use 1; constructor <;> numbers -- m=4
+  · use 1; constructor <;> numbers -- m=5
+  · use 1; constructor <;> numbers -- m=6
 
 example {x : ℚ} (h1 : x ^ 2 = 4) (h2 : 1 < x) : x = 2 := by
   have h3 :=
@@ -109,4 +118,17 @@ example {x : ℚ} (h1 : x ^ 2 = 4) (h2 : 1 < x) : x = 2 := by
 namespace Nat
 
 example (p : ℕ) (h : Prime p) : p = 2 ∨ Odd p := by
-  sorry
+obtain h_even | h_odd := Nat.even_or_odd p  --eerror here with Nat.even_or_odd,
+  · left
+    obtain ⟨k, hk⟩ := h_even --herre error with :=?
+    -- If p is even and prime, p must be 2
+    have h2 : k = 1 := by
+      apply h.right k
+      rw [hk]
+      apply nmem_of_mem_singleton -- This part depends on specific library lemmas
+      -- Simpler: use the fact that if p=2k and p is prime, then k=1
+      sorry
+    rw [hk, h2]
+    numbers
+  · right
+    exact h_odd

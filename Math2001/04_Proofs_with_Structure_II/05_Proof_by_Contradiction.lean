@@ -137,28 +137,86 @@ example : Prime 79 := by
 
 
 example : ¬ (∃ t : ℝ, t ≤ 4 ∧ t ≥ 5) := by
-  sorry
+  intro ⟨t, ht4, ht5⟩
+  have : (5 : ℝ) ≤ 4 := by
+    calc 5 ≤ t := ht5
+      _ ≤ 4 := ht4
+  numbers at this
 
 example : ¬ (∃ a : ℝ, a ^ 2 ≤ 8 ∧ a ^ 3 ≥ 30) := by
   sorry
 
 example : ¬ Int.Even 7 := by
-  sorry
+  intro h
+  rw [Int.even_iff_modEq] at h
+  have hmod : 7 ≡ 1 [ZMOD 2] := by
+    use 3
+    numbers
+  have : 0 ≡ 1 [ZMOD 2] := h.symm.trans hmod
+  numbers at this
 
 example {n : ℤ} (hn : n + 3 = 7) : ¬ (Int.Even n ∧ n ^ 2 = 10) := by
   sorry
 
 example {x : ℝ} (hx : x ^ 2 < 9) : ¬ (x ≤ -3 ∨ x ≥ 3) := by
-  sorry
+  intro h
+  obtain h | h := h
+  · -- x ≤ -3  →  x² ≥ 9
+    have :=
+      calc x ^ 2 = (-x) ^ 2   := by ring
+        _ ≥ 3 ^ 2              := by rel [show -x ≥ 3 by addarith [h]]
+        _ = 9                  := by numbers
+    addarith [hx, this]
+  · -- x ≥ 3  →  x² ≥ 9
+    have :=
+      calc x ^ 2 ≥ 3 ^ 2 := by rel [h]
+        _ = 9             := by numbers
+    addarith [hx, this]
 
 example : ¬ (∃ N : ℕ, ∀ k > N, Nat.Even k) := by
   sorry
 
 example (n : ℤ) : ¬(n ^ 2 ≡ 2 [ZMOD 4]) := by
-  sorry
+  intro h
+  mod_cases hn : n % 4
+  · have hns : n ^ 2 ≡ 0 [ZMOD 4] := by
+      calc n ^ 2 ≡ 0 ^ 2 [ZMOD 4] := by rel [hn]
+        _ = 0 := by numbers
+    have : 0 ≡ 2 [ZMOD 4] := hns.symm.trans h
+    numbers at this
+  · have hns : n ^ 2 ≡ 1 [ZMOD 4] := by
+      calc n ^ 2 ≡ 1 ^ 2 [ZMOD 4] := by rel [hn]
+        _ = 1 := by numbers
+    have : 1 ≡ 2 [ZMOD 4] := hns.symm.trans h
+    numbers at this
+  · have hns : n ^ 2 ≡ 0 [ZMOD 4] := by
+      calc n ^ 2 ≡ 2 ^ 2 [ZMOD 4] := by rel [hn]
+        _ = 1 * 4 + 0 := by numbers
+        _ ≡ 0 [ZMOD 4] := by extra
+    have : 0 ≡ 2 [ZMOD 4] := hns.symm.trans h
+    numbers at this
+  · have hns : n ^ 2 ≡ 1 [ZMOD 4] := by
+      calc n ^ 2 ≡ 3 ^ 2 [ZMOD 4] := by rel [hn]
+        _ = 2 * 4 + 1 := by numbers
+        _ ≡ 1 [ZMOD 4] := by extra
+    have : 1 ≡ 2 [ZMOD 4] := hns.symm.trans h
+    numbers at this
 
 example : ¬ Prime 1 := by
   sorry
 
 example : Prime 97 := by
-  sorry
+  apply better_prime_test (T := 10)
+  · numbers
+  · numbers
+  intro m hm1 hm2
+  apply Nat.not_dvd_of_exists_lt_and_lt
+  interval_cases m
+  · use 48; constructor <;> numbers -- m=2
+  · use 32; constructor <;> numbers -- m=3
+  · use 24; constructor <;> numbers -- m=4
+  · use 19; constructor <;> numbers -- m=5
+  · use 16; constructor <;> numbers -- m=6
+  · use 13; constructor <;> numbers -- m=7
+  · use 12; constructor <;> numbers -- m=8
+  · use 10; constructor <;> numbers -- m=9
