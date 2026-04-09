@@ -79,11 +79,32 @@ example {P : Prop} (hP : ¬¬P) : P := by
 
 def Tribalanced (x : ℝ) : Prop := ∀ n : ℕ, (1 + x / n) ^ n < 3
 
-example : ∃ x : ℝ, Tribalanced x ∧ ¬ Tribalanced (x + 1) := by
-  sorry
+example : ∃ x : ℝ, Tribalanced x ∧ ¬ Tribalanced (x + 1) := by /-solve-/
+  use 1
+  constructor
+  · intro n
+    have : (1 + 1/n) ^ n < 3 := by
+      apply numbers
+      · apply pow_lt_pow_of_lt_left
+        · apply one_lt_two
+        · apply div_pos
+          · apply one_pos
+          · apply nat.cast_pos.mpr
+            apply nat.succ_pos
+      · apply nat.cast_pos.mpr
+        apply nat.succ_pos
+    apply this
 
 example (P Q : Prop) : (¬P → ¬Q) ↔ (Q → P) := by
   sorry
 
-example : ∃ k : ℕ, Superpowered k ∧ ¬ Superpowered (k + 1) := by
-  sorry
+example : ∃ k : ℕ, Superpowered k ∧ ¬ Superpowered (k + 1) := by /-solve-/
+  by_cases h2 : Superpowered 2
+  · use 2
+    constructor
+    · apply h2
+    · apply not_superpowered_three
+  · use 1
+    constructor
+    · apply superpowered_one
+    · apply h2

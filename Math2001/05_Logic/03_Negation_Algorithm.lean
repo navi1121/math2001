@@ -60,21 +60,71 @@ example : ¬ (∃ n : ℕ, n ^ 2 = 2) := by
 /-! # Exercises -/
 
 
-example (P : Prop) : ¬ (¬ P) ↔ P := by
-  sorry
+example (P : Prop) : ¬ (¬ P) ↔ P := by /-solve-/
+  constructor
+  · intro h
+    by_cases hP : P
+    · apply hP
+    · contradiction
+  · intro h
+    intro h_not_P
+    contradiction
 
 example (P Q : Prop) : ¬ (P → Q) ↔ (P ∧ ¬ Q) := by
   sorry
 
-example (P : α → Prop) : ¬ (∀ x, P x) ↔ ∃ x, ¬ P x := by
-  sorry
+example (P : α → Prop) : ¬ (∀ x, P x) ↔ ∃ x, ¬ P x := by /-solve-/
+  constructor
+
+  -- going to right direction
+  · intro h
+    by_cases h' : ∃ x, ¬ P x
+    · exact h'
+    · exfalso
+      apply h
+      intro x
+      by_cases hx : P x
+      · exact hx
+      · have : ∃ x, ¬ P x := ⟨x, hx⟩
+        contradiction
+
+  -- going towards left direction
+  · intro h
+    obtain ⟨x, h_not_P⟩ := h
+    intro h_forall
+    have := h_forall x
+    exact h_not_P this
 
 example : (¬ ∀ a b : ℤ, a * b = 1 → a = 1 ∨ b = 1)
     ↔ ∃ a b : ℤ, a * b = 1 ∧ a ≠ 1 ∧ b ≠ 1 :=
   sorry
 
-example : (¬ ∃ x : ℝ, ∀ y : ℝ, y ≤ x) ↔ (∀ x : ℝ, ∃ y : ℝ, y > x) :=
-  sorry
+example : (¬ ∃ x : ℝ, ∀ y : ℝ, y ≤ x) ↔ (∀ x : ℝ, ∃ y : ℝ, y > x) := /-solve-/
+  have h1 : (¬ ∃ x : ℝ, ∀ y : ℝ, y ≤ x) → (∀ x : ℝ, ∃ y : ℝ, y > x) := by
+    intro h
+    intro x
+    by_contra h'
+    have hx : ∀ y : ℝ, y ≤ x := by
+      intro y
+      by_contra hy
+      have hgt : y > x := lt_of_not_ge hy
+      apply h'
+      exact ⟨y, hgt⟩
+    apply h
+    exact ⟨x, hx⟩
+
+  have h2 : (∀ x : ℝ, ∃ y : ℝ, y > x) → (¬ ∃ x : ℝ, ∀ y : ℝ, y ≤ x) := by
+    intro h
+    intro h'
+    cases h' with
+    | intro x hx =>
+      cases h x with
+      | intro y hy =>
+        have hle : y ≤ x := hx y
+        have hnot : ¬ (y > x) := not_lt_of_ge hle
+        exact hnot hy
+
+  exact ⟨h1, h2⟩ /-errrorr-/
 
 example : ¬ (∃ m : ℤ, ∀ n : ℤ, m = n + 5) ↔ ∀ m : ℤ, ∃ n : ℤ, m ≠ n + 5 :=
   sorry
@@ -85,15 +135,17 @@ example : ¬ (∃ m : ℤ, ∀ n : ℤ, m = n + 5) ↔ ∀ m : ℤ, ∃ n : ℤ,
 #push_neg ¬(∃ x : ℝ, ∀ q : ℝ, q > x → ∃ m : ℕ, q ^ m > x)
 
 
-example : ¬ (∀ x : ℝ, x ^ 2 ≥ x) := by
+example : ¬ (∀ x : ℝ, x ^ 2 ≥ x) := by /-solve-/
   push_neg
   sorry
+
+
 
 example : ¬ (∃ t : ℝ, t ≤ 4 ∧ t ≥ 5) := by
   push_neg
   sorry
 
-example : ¬ Int.Even 7 := by
+example : ¬ Int.Even 7 := by /-solve-/
   dsimp [Int.Even]
   push_neg
   sorry
@@ -103,8 +155,35 @@ example {p : ℕ} (k : ℕ) (hk1 : k ≠ 1) (hkp : k ≠ p) (hk : k ∣ p) : ¬ 
   push_neg
   sorry
 
-example : ¬ ∃ a : ℤ, ∀ n : ℤ, 2 * a ^ 3 ≥ n * a + 7 := by
-  sorry
+example : ¬ ∃ a : ℤ, ∀ n : ℤ, 2 * a ^ 3 ≥ n * a + 7 := by /-solve-/
+  intro h
+  cases h with
+  | intro a ha =>
+    -- choose a bad n
+    let n := 2 * a ^ 3 + 1
+
+    have h1 := ha n
+    -- h1 : 2 * a^3 ≥ n * a + 7
+
+    -- expand n
+    have h2 : n * a + 7 = (2 * a ^ 3 + 1) * a + 7 := by
+      rfl
+
+    -- simplify RHS
+    have h3 : (2 * a ^ 3 + 1) * a + 7 = 2 * a ^ 4 + a + 7 := by
+      ring
+
+    rw [h2, h3] at h1
+ ---finish this proof, then do the next one
+    -- now we have:
+    -- 2 * a^3 ≥ 2 * a^4 + a + 7
+
+    -- but RHS is strictly bigger → contradiction
+    have : 2 * a ^ 4 + a + 7 > 2 * a ^ 3 := by
+      -- a^4 dominates a^3, and +a+7 makes it strictly larger
+      sorry
+
+    exact not_lt_of_ge h1 this
 
 example {p : ℕ} (hp : ¬ Prime p) (hp2 : 2 ≤ p) : ∃ m, 2 ≤ m ∧ m < p ∧ m ∣ p := by
   have H : ¬ (∀ (m : ℕ), 2 ≤ m → m < p → ¬m ∣ p)

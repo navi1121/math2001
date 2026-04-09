@@ -78,46 +78,95 @@ example (P : α → Prop) : ¬ (∃ x, P x) ↔ ∀ x, ¬ P x := by
     contradiction
 
 /-! # Exercises -/
+/-only do exercises ,, every other exercise, starting from first-/
 
 
-example {P Q : Prop} (h : P ∧ Q) : P ∨ Q := by
-  sorry
+example {P Q : Prop} (h : P ∧ Q) : P ∨ Q := by /-solve-/
+  obtain ⟨hP, hQ⟩ := h /-hypothesis is conjunction-/
+  · left
+    apply hP
+
 
 example {P Q R : Prop} (h1 : P → Q) (h2 : P → R) (h3 : P) : Q ∧ R := by
   sorry
 
-example (P : Prop) : ¬(P ∧ ¬ P) := by
-  sorry
+example (P : Prop) : ¬(P ∧ ¬ P) := by /-solve-/
+  intro h /-taking from goal-/
+  obtain ⟨hP, hNP⟩ := h
+  apply hNP /-expecting P-/
+  apply hP
 
 example {P Q : Prop} (h1 : P ↔ ¬ Q) (h2 : Q) : ¬ P := by
   sorry
 
-example {P Q : Prop} (h1 : P ∨ Q) (h2 : Q → P) : P := by
-  sorry
+example {P Q : Prop} (h1 : P ∨ Q) (h2 : Q → P) : P := by /-solve-/
+  obtain hP | hQ := h1
+  · apply hP /-prove p-/
+  · apply h2 /-apply implication-/
+    apply hQ /-apply q, prove p-/
 
 example {P Q R : Prop} (h : P ↔ Q) : (P ∧ R) ↔ (Q ∧ R) := by
   sorry
 
-example (P : Prop) : (P ∧ P) ↔ P := by
-  sorry
+example (P : Prop) : (P ∧ P) ↔ P := by /-solve-/
+  constructor /-prove both directions-/
+  · intro h /-taking from left goal-/
+    obtain ⟨hP, hP'⟩ := h
+    apply hP /-prove p-/
+  · intro h
+    constructor /-prove right direction-/
+    · apply h
+    · apply h
+
 
 example (P Q : Prop) : (P ∨ Q) ↔ (Q ∨ P) := by
   sorry
 
-example (P Q : Prop) : ¬(P ∨ Q) ↔ (¬P ∧ ¬Q) := by
-  sorry
+example (P Q : Prop) : ¬(P ∨ Q) ↔ (¬P ∧ ¬Q) := by /-solve-/
+  constructor /-both directions-/
+  · intro h
+    constructor /-prove the left direction-/
+    · intro hP /-introduce hP-/
+      apply h
+      left
+      apply hP
+    · intro hQ
+      apply h
+      right
+      apply hQ
+  · intro h
+    obtain ⟨hNP, hNQ⟩ := h
+    intro hPQ
+    obtain hP | hQ := hPQ
+    · contradiction
+    · contradiction
+
 
 example {P Q : α → Prop} (h1 : ∀ x, P x → Q x) (h2 : ∀ x, P x) : ∀ x, Q x := by
   sorry
 
-example {P Q : α → Prop} (h : ∀ x, P x ↔ Q x) : (∃ x, P x) ↔ (∃ x, Q x) := by
-  sorry
+example {P Q : α → Prop} (h : ∀ x, P x ↔ Q x) : (∃ x, P x) ↔ (∃ x, Q x) := by /-solve-/
+  constructor
+  · intro hP
+    obtain ⟨x, hx⟩ := hP
+    use x
+    apply (h x).mp /-mp is the forward implication-/
+    apply hx
+  · intro hQ
+    obtain ⟨x, hx⟩ := hQ
+    use x
+    apply (h x).mpr /-mpr is the reverse implication-/
+    apply hx
 
 example (P : α → β → Prop) : (∃ x y, P x y) ↔ ∃ y x, P x y := by
   sorry
 
-example (P : α → β → Prop) : (∀ x y, P x y) ↔ ∀ y x, P x y := by
-  sorry
+example (P : α → β → Prop) : (∀ x y, P x y) ↔ ∀ y x, P x y := by /-solve-/
+  constructor
+  · intro h y x /-introduce y and x-/
+    apply h x y /-apply the hypothesis-/
+  · intro h x y
+    apply h y x
 
 example (P : α → Prop) (Q : Prop) : ((∃ x, P x) ∧ Q) ↔ ∃ x, (P x ∧ Q) := by
   sorry
