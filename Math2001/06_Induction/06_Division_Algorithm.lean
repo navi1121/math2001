@@ -106,8 +106,14 @@ example (a b : ℤ) (h : 0 < b) : ∃ r : ℤ, 0 ≤ r ∧ r < b ∧ a ≡ r [ZM
 /-! # Exercises -/
 
 
-theorem lt_fmod_of_neg (n : ℤ) {d : ℤ} (hd : d < 0) : d < fmod n d := by
-  sorry
+theorem lt_fmod_of_neg (n : ℤ) {d : ℤ} (hd : d < 0) : d < fmod n d := by --- complete this problem
+  have hpos : 0 < -d := by addarith [hd]
+
+  have h1 : 0 ≤ fmod n (-d) := fmod_nonneg_of_pos n hpos
+  have h2 : fmod n (-d) < -d := fmod_lt_of_pos n hpos
+
+  -- now convert bounds
+  addarith [hd, h1]
 
 def T (n : ℤ) : ℤ :=
   if 0 < n then
@@ -121,10 +127,36 @@ termination_by T n => 3 * n - 1
 theorem T_eq (n : ℤ) : T n = n ^ 2 := by
   sorry
 
-theorem uniqueness (a b : ℤ) (h : 0 < b) {r s : ℤ}
+theorem uniqueness (a b : ℤ) (h : 0 < b) {r s : ℤ} --- complete this problem
     (hr : 0 ≤ r ∧ r < b ∧ a ≡ r [ZMOD b])
     (hs : 0 ≤ s ∧ s < b ∧ a ≡ s [ZMOD b]) : r = s := by
-  sorry
+  obtain ⟨hr0, hrb, hrmod⟩ := hr
+  obtain ⟨hs0, hsb, hsmod⟩ := hs
+
+  -- subtract congruences
+  obtain ⟨k, hk⟩ := hrmod
+  obtain ⟨l, hl⟩ := hsmod
+
+  -- rewrite both
+  have h1 : a = r + b * k := by addarith [hk]
+  have h2 : a = s + b * l := by addarith [hl]
+
+  -- subtract
+  have hdiff :
+      r - s = b * (l - k) := by
+    addarith [h1, h2]
+
+  -- bounds: -b < r - s < b
+  have hlow : -b < r - s := by addarith [hr0, hsb]
+  have hhigh : r - s < b := by addarith [hrb, hs0]
+
+  -- since b divides (r - s) and it's strictly between -b and b
+  -- only possibility is 0
+  have : r - s = 0 := by
+    have := hdiff
+    extra
+
+  addarith [this]
 
 example (a b : ℤ) (h : 0 < b) : ∃! r : ℤ, 0 ≤ r ∧ r < b ∧ a ≡ r [ZMOD b] := by
   sorry

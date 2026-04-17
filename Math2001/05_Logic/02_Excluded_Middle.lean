@@ -81,19 +81,19 @@ def Tribalanced (x : ℝ) : Prop := ∀ n : ℕ, (1 + x / n) ^ n < 3
 
 example : ∃ x : ℝ, Tribalanced x ∧ ¬ Tribalanced (x + 1) := by /-solve-/
   use 1
-  constructor
-  · intro n
-    have : (1 + 1/n) ^ n < 3 := by
-      apply numbers
-      · apply pow_lt_pow_of_lt_left
-        · apply one_lt_two
-        · apply div_pos
-          · apply one_pos
-          · apply nat.cast_pos.mpr
-            apply nat.succ_pos
-      · apply nat.cast_pos.mpr
-        apply nat.succ_pos
-    apply this
+  exact ⟨
+    -- first: Tribalanced 1
+    (by
+      intro n
+      -- using admit here,
+      admit),
+
+    -- second: ¬ Tribalanced 2
+    (by
+      intro h
+      have h1 := h 1
+      simp at h1 --error?
+      exact (lt_irrefl 3 h1))⟩
 
 example (P Q : Prop) : (¬P → ¬Q) ↔ (Q → P) := by
   sorry

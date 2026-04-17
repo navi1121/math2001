@@ -220,5 +220,52 @@ theorem bezout (a b : ℤ) : ∃ x y : ℤ, x * a + y * b = gcd a b := by
 /-! # Exercises -/
 
 
-theorem gcd_maximal {d a b : ℤ} (ha : d ∣ a) (hb : d ∣ b) : d ∣ gcd a b := by
-  sorry
+theorem gcd_maximal {d a b : ℤ} (ha : d ∣ a) (hb : d ∣ b) : d ∣ gcd a b := by--- complete this problem
+  rw [gcd]
+  split_ifs with h1 h2 ha0 <;> push_neg at *
+  · -- case 1: 0 < b
+    have IH := gcd_maximal ha hb
+    -- goal: d ∣ gcd b (fmod a b)
+    have hmod : fmod a b + b * fdiv a b = a := fmod_add_fdiv a b
+    obtain ⟨k, hk⟩ := ha
+    obtain ⟨l, hl⟩ := hb
+    have : d ∣ fmod a b := by
+      use k - l * fdiv a b
+      calc
+        fmod a b = a - b * fdiv a b := by addarith [hmod]
+        _ = d * k - d * l * fdiv a b := by rw [hk, hl]
+        _ = d * (k - l * fdiv a b) := by ring
+    apply IH
+    · exact hb
+    · exact this
+
+  · -- case 2: b < 0
+    have IH := gcd_maximal ha hb
+    have hmod := fmod_add_fdiv a (-b)
+    obtain ⟨k, hk⟩ := ha
+    obtain ⟨l, hl⟩ := hb
+    have : d ∣ fmod a (-b) := by
+      use k + l * fdiv a (-b)
+      calc
+        fmod a (-b) = a - (-b) * fdiv a (-b) := by addarith [hmod]
+        _ = d * k + d * l * fdiv a (-b) := by rw [hk, hl]
+        _ = d * (k + l * fdiv a (-b)) := by ring
+    apply IH
+    · exact hb
+    · exact this
+
+  · -- case 3: b = 0, 0 ≤ a
+    obtain ⟨k, hk⟩ := ha
+    use k
+    calc
+      gcd a b = a := by rw [h1]
+      _ = d * k := by rw [hk]
+
+  · -- case 4: b = 0, a < 0
+    obtain ⟨k, hk⟩ := ha
+    use -k
+    calc
+      gcd a b = -a := by rw [h1]
+      _ = -(d * k) := by rw [hk]
+      _ = d * (-k) := by ring
+termination_by gcd_maximal a b => b

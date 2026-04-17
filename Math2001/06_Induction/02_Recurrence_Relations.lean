@@ -108,8 +108,20 @@ def c : ℕ → ℤ
   | 0 => 7
   | n + 1 => 3 * c n - 10
 
-example (n : ℕ) : Odd (c n) := by
-  sorry
+example (n : ℕ) : Odd (c n) := by --- complete this problem
+  simple_induction n with k IH
+  · -- base case
+    use 3
+    calc c 0 = 7 := by rw [c]
+      _ = 2 * 3 + 1 := by numbers
+  · -- inductive step
+    obtain ⟨x, hx⟩ := IH
+    use (3 * x - 5)
+    calc
+      c (k + 1)
+          = 3 * c k - 10 := by rw [c]
+      _ = 3 * (2 * x + 1) - 10 := by rw [hx]
+      _ = 2 * (3 * x - 5) + 1 := by numbers
 
 example (n : ℕ) : c n = 2 * 3 ^ n + 5 := by
   sorry
@@ -118,8 +130,18 @@ def y : ℕ → ℕ
   | 0 => 2
   | n + 1 => (y n) ^ 2
 
-example (n : ℕ) : y n = 2 ^ (2 ^ n) := by
-  sorry
+example (n : ℕ) : y n = 2 ^ (2 ^ n) := by --- complete this problem
+  simple_induction n with k IH
+  · -- base case
+    calc y 0 = 2 := by rw [y]
+      _ = 2 ^ (2 ^ 0) := by numbers
+  · -- inductive step
+    calc
+      y (k + 1)
+          = (y k) ^ 2 := by rw [y]
+      _ = (2 ^ (2 ^ k)) ^ 2 := by rw [IH]
+      _ = 2 ^ (2 * 2 ^ k) := by ring
+      _ = 2 ^ (2 ^ (k + 1)) := by ring
 
 def B : ℕ → ℚ
   | 0 => 0
@@ -132,14 +154,43 @@ def S : ℕ → ℚ
   | 0 => 1
   | n + 1 => S n + 1 / 2 ^ (n + 1)
 
-example (n : ℕ) : S n = 2 - 1 / 2 ^ n := by
-  sorry
+example (n : ℕ) : S n = 2 - 1 / 2 ^ n := by --- complete this problem
+  simple_induction n with k IH
+  · -- base case
+    calc S 0 = 1 := by rw [S]
+      _ = 2 - 1 / 2 ^ 0 := by numbers
+  · -- inductive step
+    calc
+      S (k + 1)
+          = S k + 1 / 2 ^ (k + 1) := by rw [S]
+      _ = (2 - 1 / 2 ^ k) + 1 / 2 ^ (k + 1) := by rw [IH]
+      _ = 2 - 1 / 2 ^ (k + 1) := by ring
 
 example (n : ℕ) : 0 < n ! := by
   sorry
 
-example {n : ℕ} (hn : 2 ≤ n) : Nat.Even (n !) := by
-  sorry
+example {n : ℕ} (hn : 2 ≤ n) : Nat.Even (n !) := by --- complete this problem
+  -- use the fact that 2 divides n
+  have h2 : 2 ∣ n ! := by
+    --
+    apply (by
+      have := (show ∀ d, 1 ≤ d → d ≤ n → d ∣ n ! from
+        by
+          simple_induction n with k IH
+          · intro d hd1 hd2
+            interval_cases d
+          · intro d hd1 hd2
+            obtain h | h := eq_or_lt_of_le hd2
+            · rw [h]
+              apply dvd_mul_left
+            · apply dvd_mul_of_dvd_right
+              apply IH d hd1 h)
+      exact this 2 (by numbers) hn)
+
+  -- convert divisibility → even
+  obtain ⟨k, hk⟩ := h2
+  use k
+  exact hk
 
 example (n : ℕ) : (n + 1) ! ≤ (n + 1) ^ n := by
   sorry

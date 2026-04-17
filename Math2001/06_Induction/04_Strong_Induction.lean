@@ -54,5 +54,30 @@ theorem exists_prime_factor {n : ℕ} (hn2 : 2 ≤ n) : ∃ p : ℕ, Prime p ∧
 /-! # Exercises -/
 
 
-theorem extract_pow_two (n : ℕ) (hn : 0 < n) : ∃ a x, Odd x ∧ n = 2 ^ a * x := by
-  sorry
+theorem extract_pow_two (n : ℕ) (hn : 0 < n) : ∃ a x, Odd x ∧ n = 2 ^ a * x := by --- complete this problem
+  induction' n using Nat.strong_induction_on with n IH
+  by_cases h_even : Even n
+  · -- case: n is even
+    obtain ⟨k, hk⟩ := h_even   -- n = 2k
+    have hkpos : 0 < k := by
+      have : n = 2 * k := by simpa [two_mul] using hk
+      have : 0 < 2 * k := by simpa [this] using hn
+      have : 0 < k := by extra
+      exact this
+    obtain ⟨a, x, hxodd, hx⟩ := IH k hkpos
+    use a + 1, x
+    constructor
+    · exact hxodd
+    · calc
+        n = 2 * k := by simpa [two_mul] using hk
+        _ = 2 * (2 ^ a * x) := by rw [hx]
+        _ = 2 ^ (a + 1) * x := by ring
+  · -- case: n is odd
+      use 0, n
+      constructor
+      · obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (by
+            intro h0; rw [h0] at h_even; contradiction)
+        use k
+        rw [hk]
+        ring
+      · ring

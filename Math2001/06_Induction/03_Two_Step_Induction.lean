@@ -140,8 +140,18 @@ def b : ℕ → ℤ
   | 1 => 1
   | n + 2 => 5 * b (n + 1) - 6 * b n
 
-example (n : ℕ) : b n = 3 ^ n - 2 ^ n := by
-  sorry
+example (n : ℕ) : b n = 3 ^ n - 2 ^ n := by --- complete this problem
+  two_step_induction n with k IH1 IH2
+  · calc b 0 = 0 := by rw [b]
+      _ = 3 ^ 0 - 2 ^ 0 := by numbers
+  · calc b 1 = 1 := by rw [b]
+      _ = 3 ^ 1 - 2 ^ 1 := by numbers
+  · calc
+      b (k + 2)
+          = 5 * b (k + 1) - 6 * b k := by rw [b]
+      _ = 5 * (3 ^ (k + 1) - 2 ^ (k + 1))
+            - 6 * (3 ^ k - 2 ^ k) := by rw [IH1, IH2]
+      _ = 3 ^ (k + 2) - 2 ^ (k + 2) := by ring
 
 def c : ℕ → ℤ
   | 0 => 3
@@ -156,8 +166,17 @@ def t : ℕ → ℤ
   | 1 => 7
   | n + 2 => 2 * t (n + 1) - t n
 
-example (n : ℕ) : t n = 2 * n + 5 := by
-  sorry
+example (n : ℕ) : t n = 2 * n + 5 := by --- complete this problem
+  two_step_induction n with k IH1 IH2
+  · calc t 0 = 5 := by rw [t]
+      _ = 2 * 0 + 5 := by numbers
+  · calc t 1 = 7 := by rw [t]
+      _ = 2 * 1 + 5 := by numbers
+  · calc
+      t (k + 2)
+          = 2 * t (k + 1) - t k := by rw [t]
+      _ = 2 * (2 * (k + 1) + 5) - (2 * k + 5) := by rw [IH1, IH2]
+      _ = 2 * (k + 2) + 5 := by ring
 
 def q : ℕ → ℤ
   | 0 => 1
@@ -172,8 +191,40 @@ def s : ℕ → ℤ
   | 1 => 3
   | n + 2 => 2 * s (n + 1) + 3 * s n
 
-example (m : ℕ) : s m ≡ 2 [ZMOD 5] ∨ s m ≡ 3 [ZMOD 5] := by
-  sorry
+example (m : ℕ) : s m ≡ 2 [ZMOD 5] ∨ s m ≡ 3 [ZMOD 5] := by--- complete this problem
+  have H : ∀ n : ℕ,
+      (s n ≡ 2 [ZMOD 5] ∧ s (n + 1) ≡ 3 [ZMOD 5])
+    ∨ (s n ≡ 3 [ZMOD 5] ∧ s (n + 1) ≡ 2 [ZMOD 5])
+  · intro n
+    simple_induction n with k IH
+    · left
+      constructor
+      calc s 0 = 2 := by rw [s]
+        _ ≡ 2 [ZMOD 5] := by extra
+      calc s 1 = 3 := by rw [s]
+        _ ≡ 3 [ZMOD 5] := by extra
+    · obtain ⟨h1, h2⟩ | ⟨h1, h2⟩ := IH
+      · right
+        constructor
+        · apply h2
+        calc
+          s (k + 2)
+              = 2 * s (k + 1) + 3 * s k := by rw [s]
+          _ ≡ 2 * 3 + 3 * 2 [ZMOD 5] := by rel [h1, h2]
+          _ = 12 := by numbers
+          _ ≡ 2 [ZMOD 5] := by extra
+      · left
+        constructor
+        · apply h2
+        calc
+          s (k + 2)
+              = 2 * s (k + 1) + 3 * s k := by rw [s]
+          _ ≡ 2 * 2 + 3 * 3 [ZMOD 5] := by rel [h1, h2]
+          _ = 13 := by numbers
+          _ ≡ 3 [ZMOD 5] := by extra
+  obtain ⟨h1, _⟩ | ⟨h1, _⟩ := H m
+  · left; exact h1
+  · right; exact h1
 
 def p : ℕ → ℤ
   | 0 => 2
@@ -188,8 +239,34 @@ def r : ℕ → ℤ
   | 1 => 0
   | n + 2 => 2 * r (n + 1) + r n
 
-example : forall_sufficiently_large n : ℕ, r n ≥ 2 ^ n := by
-  sorry
+example : forall_sufficiently_large n : ℕ, r n ≥ 2 ^ n := by --- complete this problem
+  dsimp
+  use 3
+  intro n hn
+  two_step_induction_from_starting_point n, hn with k hk IH1 IH2
+
+  · -- n = 3
+    calc
+      r 3 = 2 * r 2 + r 1 := by rw [r]
+      _ = 2 * (2 * r 1 + r 0) + r 1 := by rw [r]
+      _ = 2 * (2 * 0 + 2) + 0 := by rw [r, r]
+      _ = 8 := by numbers
+      _ ≥ 2 ^ 3 := by numbers
+
+  · -- n = 4
+    calc
+      r 4 = 2 * r 3 + r 2 := by rw [r]
+      _ = 2 * 8 + 2 := by numbers
+      _ = 18 := by numbers
+      _ ≥ 2 ^ 4 := by numbers
+
+  · -- inductive step
+    calc
+      r (k + 2)
+          = 2 * r (k + 1) + r k := by rw [r]
+      _ ≥ 2 * 2 ^ (k + 1) + 2 ^ k := by rel [IH1, IH2]
+      _ = 2 ^ (k + 2) + 2 ^ k := by ring
+      _ ≥ 2 ^ (k + 2) := by extra
 
 example : forall_sufficiently_large n : ℕ,
     (0.4:ℚ) * 1.6 ^ n < F n ∧ F n < (0.5:ℚ) * 1.7 ^ n := by
