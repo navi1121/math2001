@@ -131,37 +131,51 @@ def b : Humour → Humour
   | sanguine => sanguine
 
 def c : Humour → Humour
-  | melancholic => sorry
-  | choleric => sorry
-  | phlegmatic => sorry
-  | sanguine => sorry
+  | melancholic => sanguine
+  | choleric => phlegmatic
+  | phlegmatic => melancholic
+  | sanguine => phlegmatic
 
-example : b ∘ a = c := by
+example : b ∘ a = c := by --complete this proof, if applicable
   ext x
   cases x <;> exhaust
 
 
 def u (x : ℝ) : ℝ := 5 * x + 1
 
-noncomputable def v (x : ℝ) : ℝ := sorry
+noncomputable def v (x : ℝ) : ℝ := (x - 1) / 5
 
 example : Inverse u v := by
   sorry
 
 example {f : X → Y} (hf : Injective f) {g : Y → Z} (hg : Injective g) :
-    Injective (g ∘ f) := by
-  sorry
+    Injective (g ∘ f) := by --complete this proof, if applicable
+  intro x1 x2 h
+  apply hf
+  apply hg
+  exact h
 
 example {f : X → Y} (hf : Surjective f) {g : Y → Z} (hg : Surjective g) :
     Surjective (g ∘ f) := by
   sorry
 
-example {f : X → Y} (hf : Surjective f) : ∃ g : Y → X, f ∘ g = id := by
-  sorry
+example {f : X → Y} (hf : Surjective f) : ∃ g : Y → X, f ∘ g = id := by --complete this proof, if applicable
+  dsimp [Surjective] at hf
+  choose g hg using hf
+  use g
+  ext y
+  apply hg
 
 example {f : X → Y} {g : Y → X} (h : Inverse f g) : Inverse g f := by
   sorry
 
 example {f : X → Y} {g1 g2 : Y → X} (h1 : Inverse f g1) (h2 : Inverse f g2) :
-    g1 = g2 := by
-  sorry
+    g1 = g2 := by --complete this proof, if applicable
+  dsimp [Inverse] at h1 h2
+  ext y
+  calc
+    g1 y = (g1 ∘ id) y := by rfl
+    _ = (g1 ∘ (f ∘ g2)) y := by rw [h2.2]
+    _ = ((g1 ∘ f) ∘ g2) y := by rfl
+    _ = (id ∘ g2) y := by rw [h1.1]
+    _ = g2 y := by rfl

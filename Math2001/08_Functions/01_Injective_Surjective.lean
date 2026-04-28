@@ -168,10 +168,12 @@ example : Injective (fun (x:ℝ) ↦ x ^ 3) := by
 /-! # Exercises -/
 
 
-example : Injective (fun (x : ℚ) ↦ x - 12) := by
-  sorry
+example : Injective (fun (x : ℚ) ↦ x - 12) := by --complete this proof
+  intro x1 x2 h
+  have h' := congrArg (fun t : ℚ => t + 12) h
+  simpa using h'
 
-example : ¬ Injective (fun (x : ℚ) ↦ x - 12) := by
+example : ¬ Injective (fun (x : ℚ) ↦ x - 12) := by --complete this proof, if applicaable
   sorry
 
 
@@ -181,10 +183,14 @@ example : Injective (fun (x : ℝ) ↦ 3) := by
 example : ¬ Injective (fun (x : ℝ) ↦ 3) := by
   sorry
 
-example : Injective (fun (x : ℚ) ↦ 3 * x - 1) := by
-  sorry
+example : Injective (fun (x : ℚ) ↦ 3 * x - 1) := by--complete this proof
+  intro x1 x2 h
+  have h' := congrArg (fun t : ℚ => t + 1) h
+  have h'' := congrArg (fun t : ℚ => t / 3) h'
+  ring_nf at h''
+  exact h''
 
-example : ¬ Injective (fun (x : ℚ) ↦ 3 * x - 1) := by
+example : ¬ Injective (fun (x : ℚ) ↦ 3 * x - 1) := by --complete this proof, if applicaable
   sorry
 
 
@@ -195,10 +201,13 @@ example : ¬ Injective (fun (x : ℤ) ↦ 3 * x - 1) := by
   sorry
 
 
-example : Surjective (fun (x : ℝ) ↦ 2 * x) := by
-  sorry
+example : Surjective (fun (x : ℝ) ↦ 2 * x) := by--complete this proof
+  dsimp [Surjective]
+  intro y
+  use y / 2
+  ring
 
-example : ¬ Surjective (fun (x : ℝ) ↦ 2 * x) := by
+example : ¬ Surjective (fun (x : ℝ) ↦ 2 * x) := by--complete this proof, if applicable
   sorry
 
 
@@ -208,11 +217,37 @@ example : Surjective (fun (x : ℤ) ↦ 2 * x) := by
 example : ¬ Surjective (fun (x : ℤ) ↦ 2 * x) := by
   sorry
 
-example : Surjective (fun (n : ℕ) ↦ n ^ 2) := by
+example : Surjective (fun (n : ℕ) ↦ n ^ 2) := by --complete this proof
   sorry
 
-example : ¬ Surjective (fun (n : ℕ) ↦ n ^ 2) := by
-  sorry
+example : ¬ Surjective (fun (n : ℕ) ↦ n ^ 2) := by --complete this proof, if applicable
+  dsimp [Surjective]
+  push_neg
+  use 2
+  intro n
+  cases n with
+  | zero =>
+      intro hn
+      have : (0 : ℕ) = 2 := by simp using hn
+      cases this
+  | succ n =>
+      cases n with
+      | zero =>
+          intro hn
+          have : (1 : ℕ) = 2 := by simp using hn
+          cases this
+      | succ n =>
+          intro hn
+          have h2 : 2 ≤ Nat.succ (Nat.succ n) := by
+            exact Nat.succ_le_succ (Nat.succ_le_succ (Nat.zero_le n))
+          have h4 : 4 ≤ Nat.succ (Nat.succ n) ^ 2 := by
+            calc
+              4 = 2 * 2 := by numbers
+              _ ≤ Nat.succ (Nat.succ n) * Nat.succ (Nat.succ n) := by
+                exact Nat.mul_le_mul h2 h2
+              _ = Nat.succ (Nat.succ n) ^ 2 := by ring
+          have : 4 ≤ 2 := by simpa [hn] using h4
+          numbers at this
 
 inductive White
   | meg
@@ -232,10 +267,16 @@ example : Injective h := by
 example : ¬ Injective h := by
   sorry
 
-example : Surjective h := by
-  sorry
+example : Surjective h := by --complete this proof
+  dsimp [Surjective]
+  intro y
+  cases y
+  · use porthos
+    rfl
+  · use athos
+    rfl
 
-example : ¬ Surjective h := by
+example : ¬ Surjective h := by--complete this proofif applicatabl
   sorry
 
 
@@ -250,19 +291,27 @@ example : ¬ Injective l := by
   sorry
 
 
-example : Surjective l := by
+example : Surjective l := by --complete this proof, if applicable
   sorry
 
-example : ¬ Surjective l := by
-  sorry
+example : ¬ Surjective l := by --complete this proof, if applicable
+  dsimp [Surjective]
+  push_neg
+  use athos
+  intro x
+  cases x <;> exhaust
 
 example (f : X → Y) : Injective f ↔ ∀ x1 x2 : X, x1 ≠ x2 → f x1 ≠ f x2 := by
   sorry
 
-example : ∀ (f : ℚ → ℚ), Injective f → Injective (fun x ↦ f x + 1) := by
-  sorry
+example : ∀ (f : ℚ → ℚ), Injective f → Injective (fun x ↦ f x + 1) := by --complete this proof, if applicable
+  intro f hf
+  intro x1 x2 h
+  apply hf
+  have h' := congrArg (fun t : ℚ => t - 1) h
+  simpa using h'
 
-example : ¬ ∀ (f : ℚ → ℚ), Injective f → Injective (fun x ↦ f x + 1) := by
+example : ¬ ∀ (f : ℚ → ℚ), Injective f → Injective (fun x ↦ f x + 1) := by --complete this proof, if applicable
   sorry
 
 
@@ -272,11 +321,27 @@ example : ∀ (f : ℚ → ℚ), Injective f → Injective (fun x ↦ f x + x) :
 example : ¬ ∀ (f : ℚ → ℚ), Injective f → Injective (fun x ↦ f x + x) := by
   sorry
 
-example : ∀ (f : ℤ → ℤ), Surjective f → Surjective (fun x ↦ 2 * f x) := by
+example : ∀ (f : ℤ → ℤ), Surjective f → Surjective (fun x ↦ 2 * f x) := by --complete this proof, if applicable
   sorry
 
-example : ¬ ∀ (f : ℤ → ℤ), Surjective f → Surjective (fun x ↦ 2 * f x) := by
-  sorry
+example : ¬ ∀ (f : ℤ → ℤ), Surjective f → Surjective (fun x ↦ 2 * f x) := by --complete this proof, if applicable
+  dsimp [Surjective]
+  push_neg
+  use fun x : ℤ ↦ x
+  constructor
+  · intro y
+    use y
+    rfl
+  · use 1
+    intro x
+    intro hx
+    have hxeven : Int.Even (2 * x) := by
+      use x
+      ring
+    rw [hx] at hxeven
+    rw [Int.even_iff_modEq] at hxeven
+    have : (0 : ℤ) ≡ 1 [ZMOD 2] := hxeven.symm
+    numbers at this
 
 example : ∀ c : ℝ, Surjective (fun x ↦ c * x) := by
   sorry
@@ -284,8 +349,16 @@ example : ∀ c : ℝ, Surjective (fun x ↦ c * x) := by
 example : ¬ ∀ c : ℝ, Surjective (fun x ↦ c * x) := by
   sorry
 
-example {f : ℚ → ℚ} (hf : ∀ x y, x < y → f x < f y) : Injective f := by
-  sorry
+example {f : ℚ → ℚ} (hf : ∀ x y, x < y → f x < f y) : Injective f := by --complete this proof, if applicable
+  intro x y hxy
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with h | h
+  · have : f x < f y := hf x y h
+    rw [hxy] at this
+    exact lt_irrefl _ this
+  · have : f y < f x := hf y x h
+    rw [hxy] at this
+    exact lt_irrefl _ this
 
 example {f : X → ℕ} {x0 : X} (h0 : f x0 = 0) {i : X → X}
     (hi : ∀ x, f (i x) = f x + 1) : Surjective f := by

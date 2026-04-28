@@ -153,10 +153,17 @@ example : ¬ ∀ f : ℕ → ℕ, Injective f → Bijective f := by
 /-! # Exercises -/
 
 
-example : Bijective (fun (x : ℝ) ↦ 4 - 3 * x) := by
-  sorry
+example : Bijective (fun (x : ℝ) ↦ 4 - 3 * x) := by --complete this proof
+  constructor
+  · intro x1 x2 h
+    have h' := congrArg (fun t : ℝ => (4 - t) / 3) h
+    ring_nf at h'
+    exact h'
+  · intro y
+    use (4 - y) / 3
+    ring
 
-example : ¬ Bijective (fun (x : ℝ) ↦ 4 - 3 * x) := by
+example : ¬ Bijective (fun (x : ℝ) ↦ 4 - 3 * x) := by --complete this proof, if applicable
   sorry
 
 
@@ -181,10 +188,22 @@ def e : Element → Element
   | earth => fire
   | air => water
 
-example : Bijective e := by
-  sorry
+example : Bijective e := by --complete this proof, if applicable
+  constructor
+  · intro x1 x2 h
+    cases x1 <;> cases x2 <;> exhaust
+  · intro y
+    cases y
+    · use earth
+      rfl
+    · use air
+      rfl
+    · use fire
+      rfl
+    · use water
+      rfl
 
-example : ¬ Bijective e := by
+example : ¬ Bijective e := by --complete this proof, if applicable
   sorry
 
 
@@ -192,5 +211,384 @@ example : ∀ f : Subatomic → Subatomic, Injective f → Bijective f := by
   sorry
 
 
-example : ∀ f : Element → Element, Injective f → Bijective f := by
-  sorry
+example : ∀ f : Element → Element, Injective f → Bijective f := by --complete this proof, if applicable
+  intro f hf
+  constructor
+  · exact hf
+  · have hfw : f fire ≠ f water := by
+      intro h
+      have : fire = water := hf h
+      contradiction
+    have hfe : f fire ≠ f earth := by
+      intro h
+      have : fire = earth := hf h
+      contradiction
+    have hfa : f fire ≠ f air := by
+      intro h
+      have : fire = air := hf h
+      contradiction
+    have hwe : f water ≠ f earth := by
+      intro h
+      have : water = earth := hf h
+      contradiction
+    have hwa : f water ≠ f air := by
+      intro h
+      have : water = air := hf h
+      contradiction
+    have hea : f earth ≠ f air := by
+      intro h
+      have : earth = air := hf h
+      contradiction
+    match h_fire : f fire, h_water : f water with
+    | fire, fire =>
+        exfalso
+        apply hfw
+        rw [h_fire, h_water]
+    | fire, water =>
+        match h_earth : f earth with
+        | fire =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | water =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | earth =>
+            have h_air : f air = air := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨air, h_air⟩
+        | air =>
+            have h_air : f air = earth := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨earth, h_earth⟩
+    | fire, earth =>
+        match h_earth : f earth with
+        | fire =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | water =>
+            have h_air : f air = air := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨air, h_air⟩
+        | earth =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | air =>
+            have h_air : f air = water := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨earth, h_earth⟩
+    | fire, air =>
+        match h_earth : f earth with
+        | fire =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | water =>
+            have h_air : f air = earth := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨water, h_water⟩
+        | earth =>
+            have h_air : f air = water := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨water, h_water⟩
+        | air =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+    | water, fire =>
+        match h_earth : f earth with
+        | fire =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | water =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | earth =>
+            have h_air : f air = air := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨water, h_water⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨air, h_air⟩
+        | air =>
+            have h_air : f air = earth := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨water, h_water⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨earth, h_earth⟩
+    | water, water =>
+        exfalso
+        apply hfw
+        rw [h_fire, h_water]
+    | water, earth =>
+        match h_earth : f earth with
+        | fire =>
+            have h_air : f air = air := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨air, h_air⟩
+        | water =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | earth =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | air =>
+            have h_air : f air = fire := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨air, h_air⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨earth, h_earth⟩
+    | water, air =>
+        match h_earth : f earth with
+        | fire =>
+            have h_air : f air = earth := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨water, h_water⟩
+        | water =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | earth =>
+            have h_air : f air = fire := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨air, h_air⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨water, h_water⟩
+        | air =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+    | earth, fire =>
+        match h_earth : f earth with
+        | fire =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | water =>
+            have h_air : f air = air := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨water, h_water⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨air, h_air⟩
+        | earth =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | air =>
+            have h_air : f air = water := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨water, h_water⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨earth, h_earth⟩
+    | earth, water =>
+        match h_earth : f earth with
+        | fire =>
+            have h_air : f air = air := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨air, h_air⟩
+        | water =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | earth =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | air =>
+            have h_air : f air = fire := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨air, h_air⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨earth, h_earth⟩
+    | earth, earth =>
+        exfalso
+        apply hfw
+        rw [h_fire, h_water]
+    | earth, air =>
+        match h_earth : f earth with
+        | fire =>
+            have h_air : f air = water := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨water, h_water⟩
+        | water =>
+            have h_air : f air = fire := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨air, h_air⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨fire, h_fire⟩
+            · exact ⟨water, h_water⟩
+        | earth =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+        | air =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+    | air, fire =>
+        match h_earth : f earth with
+        | fire =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | water =>
+            have h_air : f air = earth := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨water, h_water⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨fire, h_fire⟩
+        | earth =>
+            have h_air : f air = water := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨water, h_water⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨fire, h_fire⟩
+        | air =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+    | air, water =>
+        match h_earth : f earth with
+        | fire =>
+            have h_air : f air = earth := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨fire, h_fire⟩
+        | water =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | earth =>
+            have h_air : f air = fire := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨air, h_air⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨fire, h_fire⟩
+        | air =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+    | air, earth =>
+        match h_earth : f earth with
+        | fire =>
+            have h_air : f air = water := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨air, h_air⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨fire, h_fire⟩
+        | water =>
+            have h_air : f air = fire := by
+              cases h : f air <;> exhaust
+            intro y
+            cases y
+            · exact ⟨air, h_air⟩
+            · exact ⟨earth, h_earth⟩
+            · exact ⟨water, h_water⟩
+            · exact ⟨fire, h_fire⟩
+        | earth =>
+            exfalso
+            apply hwe
+            rw [h_water, h_earth]
+        | air =>
+            exfalso
+            apply hfe
+            rw [h_fire, h_earth]
+    | air, air =>
+        exfalso
+        apply hfw
+        rw [h_fire, h_water]

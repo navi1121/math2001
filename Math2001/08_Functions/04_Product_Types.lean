@@ -209,29 +209,57 @@ example : Bijective p := by
 
 
 example : Bijective (fun ((r, s) : ℚ × ℚ) ↦ (s, r - s)) := by
-  rw [bijective_iff_exists_inverse]
-  sorry
+  rw [bijective_iff_exists_inverse] --complete this proof, if applicable
+  use fun (a, b) ↦ (a + b, a)
+  constructor
+  · ext ⟨r, s⟩
+    dsimp
+    ring
+  · ext ⟨a, b⟩
+    dsimp
+    ring
 
 example : ¬ Injective (fun ((x, y) : ℤ × ℤ) ↦ x - 2 * y - 1) := by
   sorry
 example : Surjective (fun ((x, y) : ℤ × ℤ) ↦ x - 2 * y - 1) := by
   sorry
 
-example : ¬ Surjective (fun ((x, y) : ℚ × ℚ) ↦ x ^ 2 + y ^ 2) := by
-  sorry
+example : ¬ Surjective (fun ((x, y) : ℚ × ℚ) ↦ x ^ 2 + y ^ 2) := by --complete this proof, if applicable
+  dsimp [Surjective]
+  push_neg
+  use -1
+  intro p
+  rcases p with ⟨x, y⟩
+  apply ne_of_gt
+  calc -1 < 0 := by numbers
+    _ ≤ x ^ 2 + y ^ 2 := by extra
 
 example : Surjective (fun ((x, y) : ℚ × ℚ) ↦ x ^ 2 - y ^ 2) := by
   sorry
 
-example : Surjective (fun ((a, b) : ℚ × ℕ) ↦ a ^ b) := by
-  sorry
+example : Surjective (fun ((a, b) : ℚ × ℕ) ↦ a ^ b) := by --complete this proof, if applicable
+  intro q
+  use (q, 1)
+  dsimp
+  ring
 
 example : ¬ Injective
     (fun ((x, y, z) : ℝ × ℝ × ℝ) ↦ (x + y + z, x + 2 * y + 3 * z)) := by
   sorry
 
-example : Injective (fun ((x, y) : ℝ × ℝ) ↦ (x + y, x + 2 * y, x + 3 * y)) := by
-  sorry
+example : Injective (fun ((x, y) : ℝ × ℝ) ↦ (x + y, x + 2 * y, x + 3 * y)) := by --complete this proof, if applicable
+  intro p1 p2 h
+  rcases p1 with ⟨x1, y1⟩
+  rcases p2 with ⟨x2, y2⟩
+  dsimp at h
+  obtain ⟨h1, h2, h3⟩ := h
+  have hy : y1 = y2 := by
+    calc y1 = (x1 + 2 * y1) - (x1 + y1) := by ring
+      _ = (x2 + 2 * y2) - (x2 + y2) := by rw [h1, h2]
+      _ = y2 := by ring
+  constructor
+  · addarith [h1, hy]
+  · exact hy
 
 def h : ℝ × ℝ × ℝ → ℝ × ℝ × ℝ
   | (x, y, z) => (y, z, x)
