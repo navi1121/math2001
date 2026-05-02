@@ -129,26 +129,80 @@ example : {x : ℝ | -1 < x} ∪ {x : ℝ | x < 1} = univ := by
 macro "check_equality_of_explicit_sets" : tactic => `(tactic| (ext; dsimp; exhaust))
 
 
-example : {-1, 2, 4, 4} ∪ {3, -2, 2} = sorry := by check_equality_of_explicit_sets
+example : {-1, 2, 4, 4} ∪ {3, -2, 2} = {-2, -1, 2, 3, 4} := by
+  check_equality_of_explicit_sets -- complete this
 
-example : {0, 1, 2, 3, 4} ∩ {0, 2, 4, 6, 8} = sorry := by
+example : {0, 1, 2, 3, 4} ∩ {0, 2, 4, 6, 8} = {0, 2, 4} := by
   check_equality_of_explicit_sets
 
-example : {1, 2} ∩ {3} = sorry := by check_equality_of_explicit_sets
+example : {1, 2} ∩ {3} = ∅ := by
+  check_equality_of_explicit_sets -- complete this
 
-example : {3, 4, 5}ᶜ ∩ {1, 3, 5, 7, 9} = sorry := by
+example : {3, 4, 5}ᶜ ∩ {1, 3, 5, 7, 9} = {1, 7, 9} := by
   check_equality_of_explicit_sets
 
 example : {r : ℤ | r ≡ 7 [ZMOD 10] }
-    ⊆ {s : ℤ | s ≡ 1 [ZMOD 2]} ∩ {t : ℤ | t ≡ 2 [ZMOD 5]} := by
-  sorry
+    ⊆ {s : ℤ | s ≡ 1 [ZMOD 2]} ∩ {t : ℤ | t ≡ 2 [ZMOD 5]} := by -- complete this
+  dsimp [Set.subset_def]
+  intro r hr
+  constructor
+  · dsimp [Int.ModEq] at hr ⊢
+    obtain ⟨k, hk⟩ := hr
+    use 5 * k + 3
+    calc
+      r - 1 = (r - 7) + 6 := by ring
+      _ = 10 * k + 6 := by rw [hk]
+      _ = 2 * (5 * k + 3) := by ring
+  · dsimp [Int.ModEq] at hr ⊢
+    obtain ⟨k, hk⟩ := hr
+    use 2 * k + 1
+    calc
+      r - 2 = (r - 7) + 5 := by ring
+      _ = 10 * k + 5 := by rw [hk]
+      _ = 5 * (2 * k + 1) := by ring
 
 example : {n : ℤ | 5 ∣ n} ∩ {n : ℤ | 8 ∣ n} ⊆ {n : ℤ | 40 ∣ n} := by
   sorry
 
 example :
-    {n : ℤ | 3 ∣ n} ∪ {n : ℤ | 2 ∣ n} ⊆ {n : ℤ | n ^ 2 ≡ 1 [ZMOD 6]}ᶜ := by
-  sorry
+    {n : ℤ | 3 ∣ n} ∪ {n : ℤ | 2 ∣ n} ⊆ {n : ℤ | n ^ 2 ≡ 1 [ZMOD 6]}ᶜ := by -- complete this
+  dsimp [Set.subset_def]
+  intro n hn
+  change ¬ n ^ 2 ≡ 1 [ZMOD 6]
+  intro hsq
+  obtain h3 | h2 := hn
+  · obtain ⟨k, hk⟩ := h3
+    have hsq3 : n ^ 2 ≡ 1 [ZMOD 3] := by
+      dsimp [Int.ModEq] at hsq ⊢
+      obtain ⟨t, ht⟩ := hsq
+      use 2 * t
+      calc
+        n ^ 2 - 1 = 6 * t := ht
+        _ = 3 * (2 * t) := by ring
+    have hn3 : n ^ 2 ≡ 0 [ZMOD 3] := by
+      dsimp [Int.ModEq]
+      use 3 * k ^ 2
+      calc
+        n ^ 2 - 0 = (3 * k) ^ 2 := by rw [hk]; ring
+        _ = 3 * (3 * k ^ 2) := by ring
+    have : (0 : ℤ) ≡ 1 [ZMOD 3] := hn3.symm.trans hsq3
+    numbers at this
+  · obtain ⟨k, hk⟩ := h2
+    have hsq2 : n ^ 2 ≡ 1 [ZMOD 2] := by
+      dsimp [Int.ModEq] at hsq ⊢
+      obtain ⟨t, ht⟩ := hsq
+      use 3 * t
+      calc
+        n ^ 2 - 1 = 6 * t := ht
+        _ = 2 * (3 * t) := by ring
+    have hn2 : n ^ 2 ≡ 0 [ZMOD 2] := by
+      dsimp [Int.ModEq]
+      use 2 * k ^ 2
+      calc
+        n ^ 2 - 0 = (2 * k) ^ 2 := by rw [hk]; ring
+        _ = 2 * (2 * k ^ 2) := by ring
+    have : (0 : ℤ) ≡ 1 [ZMOD 2] := hn2.symm.trans hsq2
+    numbers at this
 
 def SizeAtLeastTwo (s : Set X) : Prop := ∃ x1 x2 : X, x1 ≠ x2 ∧ x1 ∈ s ∧ x2 ∈ s
 def SizeAtLeastThree (s : Set X) : Prop :=

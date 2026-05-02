@@ -167,14 +167,43 @@ end
 section
 local infix:50 "∼" => fun (a b : ℤ) ↦ ∃ m n, m > 0 ∧ n > 0 ∧ a * m = b * n
 
-example : Reflexive (· ∼ ·) := by
-  sorry
+example : Reflexive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  intro a
+  use 1, 1
+  constructor
+  · numbers
+  constructor
+  · numbers
+  · ring
 
-example : Symmetric (· ∼ ·) := by
-  sorry
+example : Symmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  intro a b h
+  obtain ⟨m, n, hm, hn, hmn⟩ := h
+  use n, m
+  constructor
+  · exact hn
+  constructor
+  · exact hm
+  · rw [hmn]
 
-example : Transitive (· ∼ ·) := by
-  sorry
+example : Transitive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  intro a b c hab hbc
+  obtain ⟨m1, n1, hm1, hn1, h1⟩ := hab
+  obtain ⟨m2, n2, hm2, hn2, h2⟩ := hbc
+  use m1 * m2, n1 * n2
+  constructor
+  · positivity
+  constructor
+  · positivity
+  · calc
+      a * (m1 * m2) = (a * m1) * m2 := by ring
+      _ = (b * n1) * m2 := by rw [h1]
+      _ = (b * m2) * n1 := by ring
+      _ = (c * n2) * n1 := by rw [h2]
+      _ = c * (n1 * n2) := by ring
 
 end
 
@@ -198,13 +227,52 @@ section
 local infix:50 "∼" => fun ((a, b) : ℤ × ℤ) (c, d) ↦
   ∃ m n, m > 0 ∧ n > 0 ∧ m * b * (b ^ 2 - 3 * a ^ 2) = n * d * (d ^ 2 - 3 * c ^ 2)
 
-example : Reflexive (· ∼ ·) := by
-  sorry
+example : Reflexive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  intro x
+  rcases x with ⟨a, b⟩
+  dsimp
+  use 1, 1
+  constructor
+  · numbers
+  constructor
+  · numbers
+  · ring
 
-example : Symmetric (· ∼ ·) := by
-  sorry
+example : Symmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  intro x y h
+  rcases x with ⟨a, b⟩
+  rcases y with ⟨c, d⟩
+  dsimp at *
+  obtain ⟨m, n, hm, hn, hmn⟩ := h
+  use n, m
+  constructor
+  · exact hn
+  constructor
+  · exact hm
+  · rw [hmn]
 
-example : Transitive (· ∼ ·) := by
-  sorry
+example : Transitive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  intro x y z hxy hyz
+  rcases x with ⟨a, b⟩
+  rcases y with ⟨c, d⟩
+  rcases z with ⟨e, f⟩
+  dsimp at *
+  obtain ⟨m1, n1, hm1, hn1, h1⟩ := hxy
+  obtain ⟨m2, n2, hm2, hn2, h2⟩ := hyz
+  use m1 * m2, n1 * n2
+  constructor
+  · positivity
+  constructor
+  · positivity
+  · calc
+      (m1 * m2) * b * (b ^ 2 - 3 * a ^ 2)
+          = m2 * (m1 * b * (b ^ 2 - 3 * a ^ 2)) := by ring
+      _ = m2 * (n1 * d * (d ^ 2 - 3 * c ^ 2)) := by rw [h1]
+      _ = n1 * (m2 * d * (d ^ 2 - 3 * c ^ 2)) := by ring
+      _ = n1 * (n2 * f * (f ^ 2 - 3 * e ^ 2)) := by rw [h2]
+      _ = (n1 * n2) * f * (f ^ 2 - 3 * e ^ 2) := by ring
 
 end

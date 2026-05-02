@@ -170,8 +170,13 @@ end
 /-! # Exercises -/
 
 
-example : ¬ Symmetric ((·:ℝ) < ·) := by
-  sorry
+example : ¬ Symmetric ((·:ℝ) < ·) := by -- complete this
+  dsimp [Symmetric]
+  push_neg
+  use 1, 2
+  constructor
+  · numbers
+  · numbers
 
 section
 local infix:50 "∼" => fun (x y : ℤ) ↦ x ≡ y [ZMOD 2]
@@ -213,29 +218,51 @@ open Little
 local infix:50 " ∼ " => s
 
 
-example : Reflexive (· ∼ ·) := by
-  sorry
+example : ¬ Reflexive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  push_neg
+  use beth
+  exhaust
 
-example : ¬ Reflexive (· ∼ ·) := by
-  sorry
+example : ¬ Reflexive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  push_neg
+  use beth
+  exhaust
 
-example : Symmetric (· ∼ ·) := by
-  sorry
+example : Symmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  intro x y h
+  cases x <;> cases y <;> exhaust
 
-example : ¬ Symmetric (· ∼ ·) := by
-  sorry
+example : Symmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  intro x y h
+  cases x <;> cases y <;> exhaust
 
-example : AntiSymmetric (· ∼ ·) := by
-  sorry
+example : ¬ AntiSymmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [AntiSymmetric]
+  push_neg
+  use meg, jo
+  exhaust
 
-example : ¬ AntiSymmetric (· ∼ ·) := by
-  sorry
+example : ¬ AntiSymmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [AntiSymmetric]
+  push_neg
+  use meg, jo
+  exhaust
 
-example : Transitive (· ∼ ·) := by
-  sorry
+example : ¬ Transitive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  push_neg
+  use jo, beth, amy
+  exhaust
 
-example : ¬ Transitive (· ∼ ·) := by
-  sorry
+example : ¬ Transitive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  push_neg
+  use jo, beth, amy
+  exhaust
 
 end
 
@@ -273,29 +300,71 @@ end
 section
 local infix:50 "∼" => fun (x y : ℤ) ↦ x + y ≡ 0 [ZMOD 3]
 
-example : Reflexive (· ∼ ·) := by
-  sorry
+example : ¬ Reflexive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  push_neg
+  use 1
+  numbers
 
-example : ¬ Reflexive (· ∼ ·) := by
-  sorry
+example : ¬ Reflexive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  push_neg
+  use 1
+  numbers
 
-example : Symmetric (· ∼ ·) := by
-  sorry
+example : Symmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  intro x y h
+  calc
+    y + x ≡ x + y [ZMOD 3] := by ring
+    _ ≡ 0 [ZMOD 3] := by exact h
 
-example : ¬ Symmetric (· ∼ ·) := by
-  sorry
+example : Symmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  intro x y h
+  calc
+    y + x ≡ x + y [ZMOD 3] := by ring
+    _ ≡ 0 [ZMOD 3] := by exact h
 
-example : AntiSymmetric (· ∼ ·) := by
-  sorry
+example : ¬ AntiSymmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [AntiSymmetric]
+  push_neg
+  use 1, 2
+  constructor
+  · numbers
+  constructor
+  · numbers
+  · numbers
 
-example : ¬ AntiSymmetric (· ∼ ·) := by
-  sorry
+example : ¬ AntiSymmetric (· ∼ ·) := by -- complete this, if applies
+  dsimp [AntiSymmetric]
+  push_neg
+  use 1, 2
+  constructor
+  · numbers
+  constructor
+  · numbers
+  · numbers
 
-example : Transitive (· ∼ ·) := by
-  sorry
+example : ¬ Transitive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  push_neg
+  use 1, 2, 1
+  constructor
+  · numbers
+  constructor
+  · numbers
+  · numbers
 
-example : ¬ Transitive (· ∼ ·) := by
-  sorry
+example : ¬ Transitive (· ∼ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  push_neg
+  use 1, 2, 1
+  constructor
+  · numbers
+  constructor
+  · numbers
+  · numbers
 
 end
 
@@ -329,28 +398,82 @@ example : ¬ Transitive ((· : Set ℕ) ⊆ ·) := by
 section
 local infix:50 "≺" => fun ((x1, y1) : ℝ × ℝ) (x2, y2) ↦ (x1 ≤ x2 ∧ y1 ≤ y2)
 
-example : Reflexive (· ≺ ·) := by
-  sorry
+example : Reflexive (· ≺ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  intro x
+  rcases x with ⟨x1, y1⟩
+  dsimp
+  constructor <;> exact le_rfl
 
-example : ¬ Reflexive (· ≺ ·) := by
-  sorry
+example : Reflexive (· ≺ ·) := by -- complete this, if applies
+  dsimp [Reflexive]
+  intro x
+  rcases x with ⟨x1, y1⟩
+  dsimp
+  constructor <;> exact le_rfl
 
-example : Symmetric (· ≺ ·) := by
-  sorry
+example : ¬ Symmetric (· ≺ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  push_neg
+  use (0, 0), (1, 1)
+  constructor
+  · dsimp
+    constructor <;> numbers
+  · dsimp
+    intro h
+    addarith [h.1]
 
-example : ¬ Symmetric (· ≺ ·) := by
-  sorry
+example : ¬ Symmetric (· ≺ ·) := by -- complete this, if applies
+  dsimp [Symmetric]
+  push_neg
+  use (0, 0), (1, 1)
+  constructor
+  · dsimp
+    constructor <;> numbers
+  · dsimp
+    intro h
+    addarith [h.1]
 
-example : AntiSymmetric (· ≺ ·) := by
-  sorry
+example : AntiSymmetric (· ≺ ·) := by -- complete this, if applies
+  dsimp [AntiSymmetric]
+  intro x y hxy hyx
+  rcases x with ⟨x1, y1⟩
+  rcases y with ⟨x2, y2⟩
+  dsimp at *
+  have hx : x1 = x2 := le_antisymm hxy.1 hyx.1
+  have hy : y1 = y2 := le_antisymm hxy.2 hyx.2
+  rw [hx, hy]
 
-example : ¬ AntiSymmetric (· ≺ ·) := by
-  sorry
+example : AntiSymmetric (· ≺ ·) := by -- complete this, if applies
+  dsimp [AntiSymmetric]
+  intro x y hxy hyx
+  rcases x with ⟨x1, y1⟩
+  rcases y with ⟨x2, y2⟩
+  dsimp at *
+  have hx : x1 = x2 := le_antisymm hxy.1 hyx.1
+  have hy : y1 = y2 := le_antisymm hxy.2 hyx.2
+  rw [hx, hy]
 
-example : Transitive (· ≺ ·) := by
-  sorry
+example : Transitive (· ≺ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  intro x y z hxy hyz
+  rcases x with ⟨x1, y1⟩
+  rcases y with ⟨x2, y2⟩
+  rcases z with ⟨x3, y3⟩
+  dsimp at *
+  constructor
+  · exact le_trans hxy.1 hyz.1
+  · exact le_trans hxy.2 hyz.2
 
-example : ¬ Transitive (· ≺ ·) := by
-  sorry
+example : Transitive (· ≺ ·) := by -- complete this, if applies
+  dsimp [Transitive]
+  intro x y z hxy hyz
+  rcases x with ⟨x1, y1⟩
+  rcases y with ⟨x2, y2⟩
+  rcases z with ⟨x3, y3⟩
+  dsimp at *
+  constructor
+  · exact le_trans hxy.1 hyz.1
+  · exact le_trans hxy.2 hyz.2
 
 end
